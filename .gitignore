@@ -1,0 +1,11 @@
+# python
+__pycache__/
+
+.DS_Store
+.venv
+
+
+.idea
+
+# React
+node_modules/
