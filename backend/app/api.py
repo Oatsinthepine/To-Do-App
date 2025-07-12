@@ -20,3 +20,18 @@ def read_root() -> dict:
     Root endpoint to check if the API is running.
     """
     return {"message": "Welcome to the FastAPI application!"}
+
+todos = [
+    {"id": "1", "task": "watch tutorials"},
+    {"id": "2", "task": "do a practice project"},
+    {"id": "3", "task": "do leetcode problems"},
+    {"id": "4", "task": "read documentation"},
+    {"id": "5", "task": "build a portfolio"},
+]
+
+@app.get("/todos", tags=["Todos"])
+def get_all_todos() -> list[dict]:
+    """
+    Get all todos.
+    """
+    return todos
