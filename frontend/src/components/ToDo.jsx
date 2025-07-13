@@ -1,12 +1,14 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 
 const ToDosContext = React.createContext({
     todos:[], fetchTodos: () => {},
 });
 
-// create functional component Todos
+
 export default function ToDos() {
     const [todos, setTodos] = useState([]);
+    const [task, setTask] = useState("");
+
     // Function to fetch todos from the API
     const fetchTodos = async() => {
         try {
@@ -17,9 +19,35 @@ export default function ToDos() {
             console.error("Error fetching todos:", error);
         }
     }
+
+    // This function sends the POST request to the backend and add the new task
+    const handleAdd = async () => {
+            if (!task.trim()) {
+                return;
+            }
+            try {
+                await fetch("http://localhost:8000/todos", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    // This JSON.stringify({task}) is important, {task} will return {"task":"the actual value of task"}
+                    // if I do this: JSON.stringify(task), it will returns me a plain text string, not json string, and this will encounter issue when sending to backend
+                    body: JSON.stringify({task})
+                })
+                setTask("");
+                fetchTodos()
+            } catch (error) {
+                console.log("Failed to add task:", error)
+            }
+        }
+
     // useEffect to fetch todos when the component mounts
+    // this is very important to use the useEffect hook here, because in the React-Js To_Do app practice (which is the pure front-end version of this app)
+    // all the data(tasks) are stored and update directly in the frontend using useState, it does not fetch anything from an external source.
+    //However, in this full-stack version, we are fetching the data from the backend API, so must use fetch() to pull that data into the frontend — and you do this inside useEffect so that it runs once when the component mounts.
     useEffect(() => {
-        fetchTodos()}, [])
+         fetchTodos()}, [])
+
+    // without the useEffect, the fetchTodos function would never be called, and the todos state would remain empty.
 
     return (
         <ToDosContext.Provider value={{todos, fetchTodos}}>
@@ -30,7 +58,45 @@ export default function ToDos() {
                         <li key={todo.id}>{todo.task}</li>
                     ))}
                 </ul>
+                <div>
+                    <input type="text" placeholder="Please enter a new task..." value={task} onChange={(e) => setTask(e.target.value)}/>
+                    <button onClick={handleAdd}>
+                        Add task
+                    </button>
+                </div>
             </div>
         </ToDosContext.Provider>
     )
 }
+
+// export function AddToDo() {
+//     const [item, setItem] = useState("")
+//     const {todos, fetchTodos} = React.useContext(ToDosContext)
+//
+//     const handleInput = (event) => {
+//         setItem(event.target.value)
+//     }
+//
+//     const handleSubmit = async () => {
+//         const newTodo = {
+//             "id": todos.length + 1,
+//             "item": item
+//         }
+//         await fetch("http://localhost:8000/todos", {
+//             method: "POST",
+//             headers: {"Content-Type":"application/json"},
+//             body: JSON.stringify(newTodo)
+//         }).then(fetchTodos)
+//     }
+//
+//     return (
+//         <div>
+//             <form onChange={handleInput}>
+//             <input type="text" placeholder="Please enter a new task..." value={item}/>
+//             </form>
+//             <button onClick={handleSubmit}>
+//                 Add task
+//             </button>
+//         </div>
+//     )
+// }

@@ -36,3 +36,14 @@ def get_all_todos() -> list[dict]:
     """
     return todos
 
+@app.post("/todos", tags = ["Add Todo"])
+async def add_task(new_task: dict) -> dict:
+    """
+    This is the backend end point for accepting post request from frontend by adding new task into todos
+    :param new_task: expected a dictionary, this related to the frontend JSON.stringify({task}) to send a json string
+    :return: dict
+    """
+    print(new_task)
+    new_todo = {"id":str(len(todos) + 1), "task":new_task["task"]}
+    todos.append(new_todo)
+    return {"New todo added": new_todo}
