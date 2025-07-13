@@ -63,6 +63,25 @@ export default function ToDos() {
 
     }
 
+    // const [removeTask, setRemoveTask] = useState("")
+    const handleRemove= async () => {
+        if (!taskId.trim()) {
+            return
+        }
+        try {
+            // when PUT (update), better to use past parameter which is more suitable for openAPI standard, and clear. Not the query parameter
+            await fetch(`http://localhost:8000/todos/${taskId}`, {
+                method: "DELETE",
+                headers: {"Content-Type": "application/json"},
+            });
+            setTaskId("")
+            fetchTodos();
+        } catch (error) {
+            console.log("error when update", error)
+        }
+
+    }
+
     // useEffect to fetch todos when the component mounts
     // this is very important to use the useEffect hook here, because in the React-Js To_Do app practice (which is the pure front-end version of this app)
     // all the data(tasks) are stored and update directly in the frontend using useState, it does not fetch anything from an external source.
@@ -74,6 +93,7 @@ export default function ToDos() {
     return (
         // <ToDosContext.Provider value={{todos, fetchTodos}}>
             <div>
+                {/* Here below is the ordered list displaying all the fetched todos from backend */}
                 <h2>To-Do List</h2>
                 <ol>
                     {todos.map((todo) => {
@@ -84,12 +104,14 @@ export default function ToDos() {
                         )
                     })}
                 </ol>
+                {/* Here below is the input field for adding a new todos*/}
                 <div>
                     <input type="text" placeholder="Please enter a new task..." value={newTask} onChange={(e) => setNewTask(e.target.value)}/>
                     <button onClick={handleAdd}>
                         Add task
                     </button>
                 </div>
+                {/* This below is the update form used to update tasks */}
                 <div>
                     <form onSubmit={
                         (e) => {
@@ -105,41 +127,20 @@ export default function ToDos() {
                         <br/>
                         <input type="submit" value="Submit" />
                     </form>
-
+                </div>
+                {/*This below is the delete for removing the task*/}
+                <div>
+                    <form onSubmit={(e) => {
+                        e.preventDefault();
+                        handleRemove();
+                        }}>
+                        <label>To-Do ID to remove</label>
+                        <input type = "number" placeholder="enter the id of to-do" onChange={(e) => setTaskId(e.target.value)}/>
+                        <br/>
+                        <input type="submit" value="Submit" />
+                    </form>
                 </div>
             </div>
         // </ToDosContext.Provider>
     )
 }
-
-// export function AddToDo() {
-//     const [item, setItem] = useState("")
-//     const {todos, fetchTodos} = React.useContext(ToDosContext)
-//
-//     const handleInput = (event) => {
-//         setItem(event.target.value)
-//     }
-//
-//     const handleSubmit = async () => {
-//         const newTodo = {
-//             "id": todos.length + 1,
-//             "item": item
-//         }
-//         await fetch("http://localhost:8000/todos", {
-//             method: "POST",
-//             headers: {"Content-Type":"application/json"},
-//             body: JSON.stringify(newTodo)
-//         }).then(fetchTodos)
-//     }
-//
-//     return (
-//         <div>
-//             <form onChange={handleInput}>
-//             <input type="text" placeholder="Please enter a new task..." value={item}/>
-//             </form>
-//             <button onClick={handleSubmit}>
-//                 Add task
-//             </button>
-//         </div>
-//     )
-// }

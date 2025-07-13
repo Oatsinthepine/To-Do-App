@@ -63,3 +63,16 @@ async def update_todo(id: int, body:dict) -> dict:
                 "Success": f"Todo with id: {id} has updated", "updated to": todo
             }
     return {"Error": "Not found"}
+
+@app.delete("/todos/{id}")
+async def remove_todo(id: int) -> dict:
+    """
+    This is the endpoint for delete a to_do
+    :param id: the id of the to_do
+    :return: dict
+    """
+    for todo in todos:
+        if int(todo["id"]) == id:
+            todos.remove(todo)
+            return {"Success": f"todo with id: {id} is removed.", "removed todo is: ": todo}
+    return {"Error": "Not found"}
