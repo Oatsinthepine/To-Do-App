@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI()
 
 # CORS middleware to allow requests from the frontend
-origins = ["http://localhost:5137", "localhost:5137"]  # Add your frontend URL here
+origins = ["http://localhost:5173", "localhost:5173"]  # Add your frontend URL here
 
 app.add_middleware(
     CORSMiddleware,
@@ -35,3 +35,4 @@ def get_all_todos() -> list[dict]:
     Get all todos.
     """
     return todos
+

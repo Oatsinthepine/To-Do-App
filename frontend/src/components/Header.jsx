@@ -3,7 +3,7 @@ import React from 'react';
 const Header = () => {
   return (
    <div>
-     Task Manager
+     <h1>Task Manager</h1>
    </div>
   );
 };
